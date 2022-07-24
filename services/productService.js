@@ -20,9 +20,7 @@ export const getDBProductById = async (id) => {
 }
 
 export const createDBProduct = async (product) => {
-  console.log('product2:', product);
   if(!product) {
-    console.log(product);
     return errorHandler({statusCode: 400, message: 'Product cannot be null'})
   }
   try {
