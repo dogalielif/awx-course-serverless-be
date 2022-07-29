@@ -1,7 +1,6 @@
 import { PutObjectCommand, CopyObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { success } from "../../utils/http.util";
 
 const BUCKET = 'import-products-aws-course-bucket';
 const REGION = 'us-east-1';
@@ -23,10 +22,9 @@ export const getSigned = async (event) => {
       expiresIn: 3600,
     });
 
-    return success(signedUrl);
+    return signedUrl;
 
   } catch(err) {
     throw new Error(err);
   }
 }
-
