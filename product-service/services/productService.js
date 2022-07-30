@@ -18,6 +18,7 @@ export const createDBProduct = async (product) => {
   }
  
   const { title, price, description } = product;
+  const count = product.count || 1;
   if(!title || !price || !description) {
     const error = new Error('Product should have title, price and description properties');
     error.statusCode = 400;
@@ -25,7 +26,7 @@ export const createDBProduct = async (product) => {
   }
   const resp = await db.query('INSERT INTO products(title, description, price) VALUES($1, $2, $3) RETURNING *', [title, description, price])
   if(resp?.rows?.[0]) {
-    await db.query('INSERT INTO stocks(product_id, count) VALUES($1, $2) RETURNING *', [resp?.rows[0].id, 3])
+    await db.query('INSERT INTO stocks(product_id, count) VALUES($1, $2) RETURNING *', [resp?.rows[0].id, count])
   }
   return resp?.rows ? resp.rows : resp;
  
