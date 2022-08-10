@@ -14,6 +14,15 @@ provider:
     PGPASSWORD: ${env:PGPASSWORD}
     PGDATABASE: ${env:PGDATABASE}
     PGPORT: ${env:PGPORT}
+    CatalogItemsQueue:
+      Ref: CatalogItemsQueue
+
+resources:
+  Resources:
+    CatalogItemsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalog-items-queue
 
 plugins:
   - serverless-webpack
@@ -41,6 +50,15 @@ functions:
           path: /products
           method: post
           cors: true
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - CatalogItemsQueue
+              - Arn
 custom:
   webpack:
     webpackConfig: 'webpack.config.js' # Name of webpack configuration file
