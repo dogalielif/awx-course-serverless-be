@@ -80,7 +80,6 @@ export const getParsedObject = async (record) => {
 }
 
 export const sendMessageToSQS = async (parsedProduct) => {
-  console.log(parsedProduct);
   try {
     const sqsClient = await getSQSClient();
 
