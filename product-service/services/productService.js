@@ -1,4 +1,9 @@
 import db from "../db";
+import  { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+
+const REGION = 'eu-west-1';
+
+const getSNSClient = async () => await new SNSClient({ region: REGION });
 
 export const getDBProducts = async () => {
   try {
@@ -38,11 +43,27 @@ export const createDBProduct = async (product) => {
     if(resp?.rows?.[0]) {
       await db.query('INSERT INTO stocks(product_id, count) VALUES($1, $2) RETURNING *', [resp?.rows[0].id, count])
     }
-    console.log('here resp from db: ', resp);
-    return resp?.rows ? resp.rows : resp;
+    return resp?.rows?.[0] ? resp.rows?.[0] : resp;
   } catch (err) {
     throw new Error(err);
   }
- 
+}
+
+export const sendNotification = async (createdProducts) => {
+  const params = {
+    Subject: 'New products added to aws course project',
+    Message: `Added products are \r\n ${JSON.stringify(createdProducts)}`,
+    TopicArn: process.env.SNS_ARN
+  };
+
+  try {
+    const snsClient = await getSNSClient();
+    const data = await snsClient.send(new PublishCommand(params));
+    console.log('sns response: ', data);
+    return data;
+  } catch(err) {
+    console.log('sns error: ', err);
+    throw new Error(err);
+  }
 }
 
