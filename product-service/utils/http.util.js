@@ -32,11 +32,13 @@ export const requestHandler = (async (event, fn) => {
     return result;
   } catch(err) {
 
-    const message = err?.message || 'Error occured' 
+    const message = err?.message || 'Error occured';
+    err.statusCode = err?.statusCode  || HttpCode.SERVER_ERROR;
+
     logger.error(err);
     
     return {
-      statusCode: err?.statusCode  || HttpCode.SERVER_ERROR,
+      statusCode: err.statusCode,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true 

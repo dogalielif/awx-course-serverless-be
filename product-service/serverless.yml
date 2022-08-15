@@ -17,31 +17,31 @@ provider:
     CatalogItemsQueue:
       Ref: CatalogItemsQueue
     SNS_ARN:
-      Ref: SNSTopic
+      Ref: CreateProductTopic
   iam:
     role:
       statements:
         - Effect: "Allow"
           Action: "sns:*"
           Resource: 
-            Ref: SNSTopic
+            Ref: CreateProductTopic
 resources:
   Resources:
     CatalogItemsQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: catalog-items-queue
-    SNSTopic:
+    CreateProductTopic:
       Type: AWS::SNS::Topic
       Properties:
-        TopicName: catalog-items-created-topic
+        TopicName: create-product-topic
     SNSSubscription:
       Type: AWS::SNS::Subscription
       Properties:
         Endpoint: dogali.elif@gmail.com
         Protocol: email
         TopicArn:
-          Ref: SNSTopic
+          Ref: CreateProductTopic
 
 plugins:
   - serverless-webpack
