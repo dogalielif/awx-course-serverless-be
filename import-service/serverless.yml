@@ -9,9 +9,9 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   stage: dev
-  region: us-east-1
+  region: eu-west-1
   iam:
     role:
       statements:
@@ -19,16 +19,19 @@ provider:
           Action:
             - "s3:ListBucket"
           Resource: 
-            - "arn:aws:s3:::import-products-aws-course-bucket"
-            - "arn:aws:s3:::import-products-aws-course-bucket/*"
+            - "arn:aws:s3:::import-products-aws-course-bucket-2"
+            - "arn:aws:s3:::import-products-aws-course-bucket-2/*"
         - Effect: "Allow"
           Action:
             - "s3:*"
           Resource:
-            - "arn:aws:s3:::import-products-aws-course-bucket"
-            - "arn:aws:s3:::import-products-aws-course-bucket/*"
-
-
+            - "arn:aws:s3:::import-products-aws-course-bucket-2"
+            - "arn:aws:s3:::import-products-aws-course-bucket-2/*"
+        - Effect: "Allow"
+          Action:
+            - "sqs:*"
+          Resource:
+            - "arn:aws:sqs:eu-west-1:317080564677:catalog-items-queue"
 plugins:
   - serverless-webpack
   - serverless-offline
@@ -49,7 +52,7 @@ functions:
     handler: handler.parseCSVFile
     events:
       - s3:
-          bucket: import-products-aws-course-bucket
+          bucket: import-products-aws-course-bucket-2
           event: s3:ObjectCreated:*
           rules:
             - prefix: uploaded/

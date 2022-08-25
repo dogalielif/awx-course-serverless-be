@@ -14,7 +14,7 @@ export const requestHandler = (async (event, fn) => {
     const response = await fn(event);
     const statusCode = response.statusCode || HttpCode.OK
 
-    return statusCode === HttpCode.OK ? {
+    const result = statusCode === HttpCode.OK ? {
       statusCode,
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -28,13 +28,17 @@ export const requestHandler = (async (event, fn) => {
         'Access-Control-Allow-Credentials': true 
       }
     }
+    console.log(result);
+    return result;
   } catch(err) {
 
-    const message = err?.message || 'Error occured' 
+    const message = err?.message || 'Error occured';
+    err.statusCode = err?.statusCode  || HttpCode.SERVER_ERROR;
+
     logger.error(err);
     
     return {
-      statusCode: err?.statusCode  || HttpCode.SERVER_ERROR,
+      statusCode: err.statusCode,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true 
