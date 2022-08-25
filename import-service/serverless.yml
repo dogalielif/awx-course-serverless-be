@@ -52,8 +52,8 @@ functions:
             arn: 'arn:aws:lambda:eu-west-1:317080564677:function:authorization-service-dev-basicAuthorizer',
             type: 'token',
             resultTtlInSeconds: 0, # Default 300 seconds
-            # identitySource: 'method.request.header.Authorization' // Another header can be chosen
-            # identityValidationExpression: 'Bearer [-0-9a-zA-Z._]*$' // Regex to check header value before calling custom authorizer
+            # identitySource: 'method.request.header.Authorization', # Another header can be chosen
+            # identityValidationExpression: 'Basic [-0-9a-zA-Z._]*$' # Regex to check header value before calling custom authorizer
           }
   importFileParser:
     handler: handler.parseCSVFile

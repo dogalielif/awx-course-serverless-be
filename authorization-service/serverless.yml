@@ -4,7 +4,6 @@ frameworkVersion: '3'
 useDotenv: true
 
 plugins:
-  - serverless-webpack
   - serverless-offline
 
 provider:
@@ -12,14 +11,9 @@ provider:
   runtime: nodejs14.x
   stage: dev
   region: eu-west-1
+  environment:
+    AUTH_TOKEN: ${env:AUTH_TOKEN}
 
 functions:
   basicAuthorizer:
     handler: handler.restApiTokenAuthorizer
-
-custom:
-  webpack:
-    webpackConfig: 'webpack.config.js' # Name of webpack configuration file
-    includeModules: true # Node modules configuration for packaging
-    packager: 'npm' # Packager that will be used to package your external modules
-    excludeFiles: src/**/*.test.js # Provide a glob for files to ignore
