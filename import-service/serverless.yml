@@ -1,0 +1,74 @@
+service: import-service
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: eu-west-1
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:ListBucket"
+          Resource: 
+            - "arn:aws:s3:::import-products-aws-course-bucket-2"
+            - "arn:aws:s3:::import-products-aws-course-bucket-2/*"
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource:
+            - "arn:aws:s3:::import-products-aws-course-bucket-2"
+            - "arn:aws:s3:::import-products-aws-course-bucket-2/*"
+        - Effect: "Allow"
+          Action:
+            - "sqs:*"
+          Resource:
+            - "arn:aws:sqs:eu-west-1:317080564677:catalog-items-queue"
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+functions:
+  importProductsFile:
+    handler: handler.getImageUploadURL
+    events:
+      - http:
+          method: get
+          path: /import
+          cors: true
+          request:
+            parameters:
+              querystrings:
+                name: true
+          authorizer: {
+            arn: 'arn:aws:lambda:eu-west-1:317080564677:function:authorization-service-dev-basicAuthorizer',
+            type: 'token',
+            resultTtlInSeconds: 0, # Default 300 seconds
+            # identitySource: 'method.request.header.Authorization', # Another header can be chosen
+            # identityValidationExpression: 'Basic [-0-9a-zA-Z._]*$' # Regex to check header value before calling custom authorizer
+          }
+  importFileParser:
+    handler: handler.parseCSVFile
+    events:
+      - s3:
+          bucket: import-products-aws-course-bucket-2
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          # Set to 'true' when using an existing bucket
+          # Else the bucket will be automatically created
+          existing: true
+custom:
+  webpack:
+    webpackConfig: 'webpack.config.js' # Name of webpack configuration file
+    includeModules: true # Node modules configuration for packaging
+    packager: 'npm' # Packager that will be used to package your external modules
+    excludeFiles: src/**/*.test.js # Provide a glob for files to ignore

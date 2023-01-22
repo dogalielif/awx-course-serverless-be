@@ -1,0 +1,19 @@
+service: authorization-service
+
+frameworkVersion: '3'
+useDotenv: true
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: eu-west-1
+  environment:
+    AUTH_TOKEN: ${env:AUTH_TOKEN}
+
+functions:
+  basicAuthorizer:
+    handler: handler.restApiTokenAuthorizer
