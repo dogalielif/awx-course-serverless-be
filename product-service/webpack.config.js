@@ -6,6 +6,9 @@ module.exports = {
     target: "node",
     // Generate sourcemaps for proper error messages
     devtool: 'source-map',
+    resolve: {
+        extensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
+    },
     // Since 'aws-sdk' is not compatible with webpack,
     // we exclude all node dependencies
     externals: [nodeExternals()],
@@ -22,10 +25,11 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js$/,
-                loader: "babel-loader",
-                include: __dirname,
-                exclude: /node_modules/
+              test: /\.js$/,
+              loader: 'babel-loader',
+              include: [__dirname + '../', __dirname],
+              exclude: [__dirname + '/node_modules', __dirname + '/dist']
+      
             }
         ]
     }
